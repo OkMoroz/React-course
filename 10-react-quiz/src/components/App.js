@@ -1,15 +1,18 @@
+import { useEffect, useReducer } from "react";
+
 import React from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
-import Question from "./Question";
-import NextButton from "./NextButton";
-
-import { useEffect, useReducer } from "react";
 import Progress from "./Progress";
 import FinishScreen from "./FinishScreen";
+import Question from "./Question";
+import NextButton from "./NextButton";
+import Footer from "./Footer";
+
+import Timer from "./Timer";
 
 const initialState = {
   questions: [],
@@ -19,6 +22,7 @@ const initialState = {
   answer: null,
   points: 0,
   highscore: 0,
+  secondsRemaining: 10,
 };
 function reducer(state, action) {
   switch (action.type) {
@@ -113,12 +117,16 @@ export default function App() {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton
-              dispatch={dispatch}
-              answer={answer}
-              numQuestions={numQuestions}
-              index={index}
-            />
+
+            <Footer>
+              <Timer />
+              <NextButton
+                dispatch={dispatch}
+                answer={answer}
+                numQuestions={numQuestions}
+                index={index}
+              />
+            </Footer>
           </>
         )}
         {status === "finished" && (
