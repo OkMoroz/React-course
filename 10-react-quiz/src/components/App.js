@@ -1,5 +1,4 @@
 import { useEffect, useReducer } from "react";
-
 import React from "react";
 import Header from "./Header";
 import Main from "./Main";
@@ -11,7 +10,6 @@ import FinishScreen from "./FinishScreen";
 import Question from "./Question";
 import NextButton from "./NextButton";
 import Footer from "./Footer";
-
 import Timer from "./Timer";
 
 const SECS_PER_QUESTION = 30;
@@ -26,6 +24,7 @@ const initialState = {
   highscore: 0,
   secondsRemaining: null,
 };
+
 function reducer(state, action) {
   switch (action.type) {
     case "dataReceived":
@@ -43,11 +42,10 @@ function reducer(state, action) {
       return {
         ...state,
         status: "active",
-        secondsRemaining: state.question.length * SECS_PER_QUESTION,
+        secondsRemaining: state.questions.length * SECS_PER_QUESTION,
       };
     case "newAnswer":
       const question = state.questions.at(state.index);
-
       return {
         ...state,
         answer: action.payload,
@@ -67,14 +65,12 @@ function reducer(state, action) {
       };
     case "restart":
       return { ...initialState, questions: state.questions, status: "ready" };
-
     case "tick":
       return {
         ...state,
         secondsRemaining: state.secondsRemaining - 1,
         status: state.secondsRemaining === 0 ? "finished" : state.status,
       };
-
     default:
       throw new Error("Action unknown");
   }
@@ -82,7 +78,7 @@ function reducer(state, action) {
 
 export default function App() {
   const [
-    { questions, status, index, answer, points, highscore, StartScreen },
+    { questions, status, index, answer, points, highscore, secondsRemaining },
     dispatch,
   ] = useReducer(reducer, initialState);
 
@@ -98,10 +94,10 @@ export default function App() {
       .then((data) => dispatch({ type: "dataReceived", payload: data }))
       .catch((err) => dispatch({ type: "dataFailed" }));
   }, []);
+
   return (
     <div className="app">
       <Header />
-
       <Main>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
@@ -122,7 +118,6 @@ export default function App() {
               dispatch={dispatch}
               answer={answer}
             />
-
             <Footer>
               <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
               <NextButton
